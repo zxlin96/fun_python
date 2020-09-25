@@ -9,18 +9,24 @@
 '''
 
 from selenium import webdriver
-import datetime
+from datetime import date
 import time
 from log import logger
 from timer import Timer
 import threading
+from datetime import datetime
 
 #创建浏览器对象
 options = webdriver.ChromeOptions()
 options.add_argument('user-agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"')
 driver_path='../tools/chromedriver'
 
-def buy(url, buy_time,driver):
+def open_url(url,driver):
+    driver.get(url)
+    driver.implicitly_wait(10)
+    time.sleep(2)
+
+def buy(buy_time,driver):
     '''
     购买函数
     url: 鞋子的申请地址
@@ -29,27 +35,24 @@ def buy(url, buy_time,driver):
     获取页面元素的方法有很多，获取得快速准确又是程序的关键
     在写代码的时候运行测试了很多次，css_selector的方式表现最佳
     '''
-    driver.get(url)
-    driver.implicitly_wait(10)
-    time.sleep(2)
-    print("正在抢购，请等待...")
+    logger.info("正在抢购，请等待...")
     btn_buy='button'
 
-    t = Timer(buy_time)
-    t.start()
+    # t = Timer(buy_time)
+    # t.start()
 
     try:
         #找到“结算按钮”，点击
         driver.find_element_by_tag_name(btn_buy).click()
     except Exception as ee:
-        print("Worning: %s"%( str(ee) ))
+        logger.info("Worning: %s"%( str(ee) ))
 
     
 
 if __name__ == "__main__":
     #TODO 做成配置 导入 开售时间 以及 网页ID
     url="https://i.eqxiu.com/s/Yzg6v1o9"
-    buydate = datetime.date.today()
+    buydate = date.today()
     buytime = input("请输入开售时间【默认今天 11:00:00.000】")
     buytime=buytime.strip()
     if buytime=="".strip():
@@ -65,10 +68,13 @@ if __name__ == "__main__":
     logger.info("选定的抢购人数：%d"%(uc))
     
     i = 0
-    list_thread = []
+    bt_2 = datetime.strptime(bt, "%Y-%m-%d %H:%M:%S.%f")
+    prepare_time = int(time.mktime(bt_2.timetuple()))
     while i <  uc:
         driver = webdriver.Chrome(driver_path, chrome_options=options)
-        threading.Thread(target=buy, args=(url, bt,driver)).start()
-        # list_thread.append(th)
+        open_url(url,driver)
+        # threading.Thread(target=buy, args=(url, bt,driver)).start()
+        threading.Timer(prepare_time-time.time(), function=buy, args=(bt,driver)).start()
+        # timer_test()
         i=i+1
         
