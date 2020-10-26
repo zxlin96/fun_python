@@ -83,6 +83,7 @@ if __name__ == "__main__":
     i = 0
     bt_2 = datetime.strptime(bt, "%Y-%m-%d %H:%M:%S.%f")
     prepare_time = int(time.mktime(bt_2.timetuple()))
+    print(prepare_time)
     while i <  uc:
         driver = webdriver.Chrome(driver_path, chrome_options=options)
         open_url(url,driver)
@@ -90,4 +91,6 @@ if __name__ == "__main__":
         threading.Timer(prepare_time-time.time(), function=buy, args=(bt,driver)).start()
         # timer_test()
         i=i+1
-        
+    
+    while True:
+        time.sleep(10)
