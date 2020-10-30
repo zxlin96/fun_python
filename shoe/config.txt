@@ -1,0 +1,9 @@
+[basic]
+# 购鞋的地址
+address = https://i.eqxiu.com/s/msLDPDG9
+# 购鞋时间
+buytime = 11:00:00.000
+# 购鞋用户数
+user_count = 1
+# 谷歌调试工具位置
+driver_path = ./chromedriver.exe

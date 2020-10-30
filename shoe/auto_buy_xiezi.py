@@ -15,11 +15,16 @@ from log import logger
 from timer import Timer
 import threading
 from datetime import datetime
+import configparser
+import os
+from read_config import ConfigHandler
+
+config_handle=ConfigHandler()
 
 #创建浏览器对象
 options = webdriver.ChromeOptions()
 options.add_argument('user-agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.102 Safari/537.36"')
-driver_path='../tools/chromedriver'
+driver_path = config_handle.read('basic', 'driver_path')
 
 def open_url(url,driver):
     driver.get(url)
@@ -50,26 +55,35 @@ def buy(buy_time,driver):
     
 
 if __name__ == "__main__":
-    #TODO 做成配置 导入 开售时间 以及 网页ID
-    url="https://i.eqxiu.com/s/Yzg6v1o9"
     buydate = date.today()
-    buytime = input("请输入开售时间【默认今天 11:00:00.000】")
-    buytime=buytime.strip()
+    #TODO 做成配置 导入 开售时间 以及 网页ID
+    if (os.path.exists("./config.txt")==False):
+        url="https://i.eqxiu.com/s/msLDPDG9"
+        buytime = input("请输入开售时间【默认今天 11:00:00.000】")
+        buytime = buytime.strip()
+        user_count = input("请输入所要抢购的人数 【默认为 1】")
+    else:
+        url = config_handle.read('basic', 'address')
+        buytime = config_handle.read('basic', 'buytime')
+        user_count = config_handle.read('basic', 'user_count')
+
     if buytime=="".strip():
         bt = str(buydate) + " 11:00:00.000"
     else:
         bt = str(buydate) + " " + buytime
-    logger.info("选定的抢购时间：%s"%(bt))
-    user_count = input("请输入所要抢购的人数 【默认为 1】")
     if user_count=="".strip():
         uc = 1
     else:
         uc = int(user_count)
-    logger.info("选定的抢购人数：%d"%(uc))
     
+    logger.info("抢购地址：%s"%(url))
+    logger.info("选定的抢购时间：%s"%(bt))
+    logger.info("选定的抢购人数：%d"%(uc))
+
     i = 0
     bt_2 = datetime.strptime(bt, "%Y-%m-%d %H:%M:%S.%f")
     prepare_time = int(time.mktime(bt_2.timetuple()))
+    print(prepare_time)
     while i <  uc:
         driver = webdriver.Chrome(driver_path, chrome_options=options)
         open_url(url,driver)
@@ -77,4 +91,6 @@ if __name__ == "__main__":
         threading.Timer(prepare_time-time.time(), function=buy, args=(bt,driver)).start()
         # timer_test()
         i=i+1
-        
+    
+    while True:
+        time.sleep(10)
