@@ -57,6 +57,7 @@ def buy(buy_time,driver):
 if __name__ == "__main__":
     buydate = date.today()
     #TODO 做成配置 导入 开售时间 以及 网页ID
+    #TODO 根据系统选择不同 可执行程序
     if (os.path.exists("./config.txt")==False):
         url="https://i.eqxiu.com/s/msLDPDG9"
         buytime = input("请输入开售时间【默认今天 11:00:00.000】")

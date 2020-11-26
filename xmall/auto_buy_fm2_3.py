@@ -130,4 +130,5 @@ if __name__ == "__main__":
         threading.Timer(prepare_time-time.time(), function=buy, args=(bt,mall,driver)).start()
         # timer_test()
         i=i+1
-        
+    while 1:
+    	time.sleep(10)
