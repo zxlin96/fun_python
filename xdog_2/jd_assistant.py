@@ -1108,7 +1108,7 @@ class Assistant(object):
             'Host': 'itemko.jd.com',
             'Referer': 'https://item.jd.com/{}.html'.format(sku_id),
         }
-        retry_interval = 0.5
+        retry_interval = 0.05
 
         while True:
             resp = self.sess.get(url=url, headers=headers, params=payload)
